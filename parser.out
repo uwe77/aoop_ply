@@ -1,0 +1,90 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> config
+Rule 1     config -> config key_value
+Rule 2     config -> key_value
+Rule 3     key_value -> KEY EQUALS VALUE NEWLINE
+
+Terminals, with rules where they appear
+
+EQUALS               : 3
+KEY                  : 3
+NEWLINE              : 3
+VALUE                : 3
+error                : 
+
+Nonterminals, with rules where they appear
+
+config               : 1 0
+key_value            : 1 2
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . config
+    (1) config -> . config key_value
+    (2) config -> . key_value
+    (3) key_value -> . KEY EQUALS VALUE NEWLINE
+
+    KEY             shift and go to state 3
+
+    config                         shift and go to state 1
+    key_value                      shift and go to state 2
+
+state 1
+
+    (0) S' -> config .
+    (1) config -> config . key_value
+    (3) key_value -> . KEY EQUALS VALUE NEWLINE
+
+    KEY             shift and go to state 3
+
+    key_value                      shift and go to state 4
+
+state 2
+
+    (2) config -> key_value .
+
+    KEY             reduce using rule 2 (config -> key_value .)
+    $end            reduce using rule 2 (config -> key_value .)
+
+
+state 3
+
+    (3) key_value -> KEY . EQUALS VALUE NEWLINE
+
+    EQUALS          shift and go to state 5
+
+
+state 4
+
+    (1) config -> config key_value .
+
+    KEY             reduce using rule 1 (config -> config key_value .)
+    $end            reduce using rule 1 (config -> config key_value .)
+
+
+state 5
+
+    (3) key_value -> KEY EQUALS . VALUE NEWLINE
+
+    VALUE           shift and go to state 6
+
+
+state 6
+
+    (3) key_value -> KEY EQUALS VALUE . NEWLINE
+
+    NEWLINE         shift and go to state 7
+
+
+state 7
+
+    (3) key_value -> KEY EQUALS VALUE NEWLINE .
+
+    KEY             reduce using rule 3 (key_value -> KEY EQUALS VALUE NEWLINE .)
+    $end            reduce using rule 3 (key_value -> KEY EQUALS VALUE NEWLINE .)
+

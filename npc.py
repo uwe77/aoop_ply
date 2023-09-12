@@ -54,19 +54,19 @@ def p_error(p):
 
 parser = yacc.yacc()
 
-# # Sample configuration text
+# Sample configuration text
 config_text = """
 name = John
 age = 30
 email = john@example.com
 """
 
-# # Parse the configuration
-config = parser.parse(config_text)
+# Parse the configuration
+config = parser.parse(config_text.strip())
 
 # Print the parsed configuration
 try:
     for key, value in config:
         print(f"{key}: {value}")
-except:
-    print("error")
+except TypeError:
+    print("Error: Invalid configuration format.")
