@@ -1,72 +1,57 @@
-import ply.lex as lex
 import ply.yacc as yacc
+from ply.lex import lex
 
-# Define lexer tokens
+# 定义词法分析器（lexer）
 tokens = (
-    'KEY',
-    'EQUALS',
-    'VALUE',
-    'NEWLINE',
+    'ID',       # 标识符（变量名）
+    'EQUALS',   # 赋值符号（=）
+    'NUMBER',   # 数字
+    'SEMICOLON',# 分号（;）
 )
 
-# Lexer rules
+# 正则表达式规则
+t_ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_EQUALS = r'='
+t_NUMBER = r'\d+'
+t_SEMICOLON = r';'
+
 t_ignore = ' \t'
 
-def t_KEY(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*'
-    t.type = 'KEY'
-    return t
-
-def t_VALUE(t):
-    r'[^=\n]+'
-    return t
-
-def t_NEWLINE(t):
-    r'\n+'
-    t.lexer.lineno += t.value.count('\n')
-    return t
-
+# 错误处理
 def t_error(t):
-    print(f"Illegal character '{t.value[0]}'")
+    print(f"不合法的字符 '{t.value[0]}'")
     t.lexer.skip(1)
 
-lexer = lex.lex()
-
-# # Parser rules
-def p_config(p):
+# 构建解析器（parser）
+def p_statements(p):
     '''
-    config : config key_value
-           | key_value
+    statements : statements statement SEMICOLON
+               | statement SEMICOLON
     '''
-    if len(p) == 3:
-        p[0] = p[1] + [p[2]]
-    else:
-        p[0] = [p[1]]
 
-def p_key_value(p):
-    'key_value : KEY EQUALS VALUE NEWLINE'
-    p[0] = (p[1], p[3])
+def p_statement_assign(p):
+    '''
+    statement : ID EQUALS expression
+    '''
+    print(f"赋值语句：{p[1]} = {p[3]}")
 
+def p_expression(p):
+    '''
+    expression : NUMBER
+    '''
+
+# 错误处理
 def p_error(p):
-    print(f"Syntax error at line {p.lineno}: {p.value}")
+    print("语法错误")
 
-
+# 创建 lexer 和 parser
+lexer = lex()
 parser = yacc.yacc()
 
-# Sample configuration text
-config_text = """
-name = John
-age = 30
-email = john@example.com
+# 测试输入
+input_text = """
+x = 10;
+y = x + 5;
 """
 
-# Parse the configuration
-config = parser.parse(config_text.strip())
-
-# Print the parsed configuration
-try:
-    for key, value in config:
-        print(f"{key}: {value}")
-except TypeError:
-    print("Error: Invalid configuration format.")
+parser.parse(input_text)
