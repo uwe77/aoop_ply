@@ -1,47 +1,39 @@
 import ply.lex as lex
+import ply.yacc as yacc
 # import re
 class NPC:
     # NPC's name, age, gender
-    def __init__(self) -> None:
-        self._name_match = r'[a-zA-Z]+'
-        self.reserved = {
-        'my name is' : 'my_name_is',
-        }
+    # def __init__(self) -> None:
+    #     self._name_match = r'[a-zA-Z]+'
+    #     self.reserved = {
+    #     'my name is' : 'my_name_is',
+    #     }
         
-    
+    ### building token=============================================
+
     tokens = (
+        #declear your tokens type
         'NAME',
         'AGE',
         'MY',
-        'YOU',
-        'ID',
-        'my_name_is'
+        'YOUR',
     )
-    
-    t_YOU = r'you'
+    # define your tokens
+    t_YOUR = r'[y, Y]our'
 
     t_MY = r'[m, M]y'
 
-    def t_ID(self, t):
-        r'[a-zA-Z_][a-zA-Z_0-9]*'
-        t.type = self.reserved.get(t.value,'ID')    # Check for reserved words
-        return t
-
     def t_NAME(self, t):
-        # self.name = r'\w+'
-        # t.value = self.name
-        r'name_is_[a-zA-Z]+;'
-        t.value = t.value[8:-1]
+        r'name_is_[a-zA-Z]+'
+        t.value = t.value[8:]
         t.type = 'NAME'
         return t
         # Define a rule so we can track name
     
     def t_AGE(self, t):
-        # self.age = r'\d+'
-        # r'my age is ' + self.age
-        # t.value = self.age
-        r'age_is_\d+;'
-        t.value = t.value[7:-1]
+        r'age_is_\d+'
+        t.value = t.value[7:]
+        t.value = int(t.value)
         t.type = 'AGE'
         return t
         # Define a rule so we can track name
@@ -51,26 +43,57 @@ class NPC:
         t.lexer.lineno += len(t.value)
         # A string containing ignored characters (spaces and tabs)
 
-    # t_ignore = ' \t'
+    t_ignore = ' \t'
     # Error handling rule
 
     def t_error(self,t):
         print("Illegal character '%s'" % t.value[0])
         t.lexer.skip(1)
         # Build the lexer
-
-    def build(self,**kwargs):
-        self.lexer = lex.lex(module=self, **kwargs)
-        # Test it output
+    ###============================================================
     
-    def test(self,data):
+    ###building parser=============================================
+    def p_expression_my(p):
+        'expression : MY term'
+        p[0] = f'my name is {p[2]}'
+    def p_expression_name(p):
+        'factor : NAME'
+        # p[0] = p[1]
+        
+    def p_expression_age(p):
+        'factor : AGE'
+        p[0] = p[1]
+
+    def p_term_factor(p):
+        'term : factor'
+        p[0] = p[1]
+
+    def p_expression_term(p):
+        'expression : term'
+        p[0] = p[1]
+
+    def p_error(p):
+        print("Systax error in input!")
+    ###============================================================
+    def build_lexer(self,**kwargs):
+        self.lexer = lex.lex(module=self, **kwargs)
+        # self.parser = yacc.yacc(module=self, **kwargs)
+        # Test it output
+
+    def build_parser(self):
+        self.parser = yacc.yacc()
+
+    def test_token(self,data):
         self.lexer.input(data)
         while True:
             tok = self.lexer.token()
             if not tok:
                 break
             print(tok)
+    
+    # def test_parser(self, **kwargs):
 
 n = NPC()
-n.build()
-n.test("my name is uwe  and my age_is_22;")
+n.build_lexer()
+n.build_parser()
+n.test_token("my name_is_uwe and my age_is_22")

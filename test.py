@@ -1,26 +1,74 @@
 import ply.lex as lex
+import ply.yacc as yacc
 
-reserved = {
-   'if' : 'IF',
-   'then' : 'THEN',
-   'else' : 'ELSE',
-   'while' : 'WHILE',
-}
+tokens = (
+    'NAME',
+    'AGE',
+    'MY',
+    'YOUR',
+)
 
-tokens = ['ID'] + list(reserved.values())
+t_YOUR = r'[y, Y]our'
 
-def t_ID(t):
-    r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reserved.get(t.value,'ID')    # Check for reserved words
+t_MY = r'[m, M]y'
+
+def t_NAME(t):
+    r'name_is_[a-zA-Z]+'
+    t.value = t.value[8:]
+    t.type = 'NAME'
     return t
+    # Define a rule so we can track name
+
+def t_AGE(t):
+    r'age_is_\d+'
+    t.value = t.value[7:]
+    t.value = int(t.value)
+    t.type = 'AGE'
+    return t
+    # Define a rule so we can track name
+
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
+    # A string containing ignored characters (spaces and tabs)
 
 t_ignore = ' \t'
+# Error handling rule
+
+def t_error(t):
+    print("Illegal character '%s'" % t.value[0])
+    t.lexer.skip(1)
+
+def p_expression_my(p):
+    'expression : MY term'
+    p[0] = f'my name is {p[2]}'
+def p_expression_name(p):
+    'factor : NAME'
+    # p[0] = p[1]
+    
+def p_expression_age(p):
+    'factor : AGE'
+    p[0] = p[1]
+
+def p_term_factor(p):
+    'term : factor'
+    p[0] = p[1]
+
+def p_expression_term(p):
+    'expression : term'
+    p[0] = p[1]
+
+def p_error(p):
+    print("Systax error in input!")
 
 lexer = lex.lex()
+parser = yacc.yacc()
 
-lexer.input("wsed fw e7y98 79")
 while True:
-    tok = lexer.token()
-    if not tok:
+    try:
+        s = input('who are u? ')
+    except EOFError:
         break
-    print(tok)
+    if not s: continue
+    result = parser.parse(s)
+    print(result)
