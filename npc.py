@@ -53,35 +53,35 @@ class NPC:
     ###============================================================
     
     ###building parser=============================================
-    def p_expression_my(p):
-        'expression : MY term'
-        p[0] = f'my name is {p[2]}'
-    def p_expression_name(p):
-        'factor : NAME'
-        # p[0] = p[1]
+    # def p_expression_my(p):
+    #     'expression : MY term'
+    #     p[0] = f'my name is {p[2]}'
+    # def p_expression_name(p):
+    #     'factor : NAME'
+    #     # p[0] = p[1]
         
-    def p_expression_age(p):
-        'factor : AGE'
-        p[0] = p[1]
+    # def p_expression_age(p):
+    #     'factor : AGE'
+    #     p[0] = p[1]
 
-    def p_term_factor(p):
-        'term : factor'
-        p[0] = p[1]
+    # def p_term_factor(p):
+    #     'term : factor'
+    #     p[0] = p[1]
 
-    def p_expression_term(p):
-        'expression : term'
-        p[0] = p[1]
+    # def p_expression_term(p):
+    #     'expression : term'
+    #     p[0] = p[1]
 
-    def p_error(p):
-        print("Systax error in input!")
+    # def p_error(p):
+    #     print("Systax error in input!")
     ###============================================================
     def build_lexer(self,**kwargs):
         self.lexer = lex.lex(module=self, **kwargs)
         # self.parser = yacc.yacc(module=self, **kwargs)
         # Test it output
 
-    def build_parser(self):
-        self.parser = yacc.yacc()
+    # def build_parser(self):
+    #     self.parser = yacc.yacc()
 
     def test_token(self,data):
         self.lexer.input(data)
@@ -95,5 +95,5 @@ class NPC:
 
 n = NPC()
 n.build_lexer()
-n.build_parser()
+# n.build_parser()
 n.test_token("my name_is_uwe and my age_is_22")
