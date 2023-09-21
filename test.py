@@ -4,24 +4,30 @@ import ply.yacc as yacc
 tokens = (
     'NAME',
     'AGE',
-    'MY',
-    'YOUR',
+    'ME',
+    'YOU',
+    'ACTION',
 )
 
-t_YOUR = r'[y, Y]our'
+t_YOU = r'[y, Y]ou'
+t_ME = r'[m, M]e'
 
-t_MY = r'[m, M]y'
-
+def t_ACTION(t):
+    r'action_[a-zA-Z]+'
+    t.value = t.value[7:]
+    t.type = 'ACTION'
+    return t
+    
 def t_NAME(t):
-    r'name_is_[a-zA-Z]+'
-    t.value = t.value[8:]
+    r'name_[a-zA-Z]+'
+    t.value = t.value[5:]
     t.type = 'NAME'
     return t
     # Define a rule so we can track name
 
 def t_AGE(t):
-    r'age_is_\d+'
-    t.value = t.value[7:]
+    r'age_\d+'
+    t.value = t.value[4:]
     t.value = int(t.value)
     t.type = 'AGE'
     return t
@@ -42,6 +48,7 @@ def t_error(t):
 def p_expression_my(p):
     'expression : MY term'
     p[0] = f'my name is {p[2]}'
+    
 def p_expression_name(p):
     'factor : NAME'
     # p[0] = p[1]
@@ -49,6 +56,10 @@ def p_expression_name(p):
 def p_expression_age(p):
     'factor : AGE'
     p[0] = p[1]
+
+def p_expression_action(p):
+    'expression : expression ACTION term'
+    p[0] = f'{p[1]} is {p[2]}ing {p[3]}'
 
 def p_term_factor(p):
     'term : factor'
