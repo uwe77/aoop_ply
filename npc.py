@@ -1,6 +1,6 @@
 import ply.lex as lex
 import ply.yacc as yacc
-
+import pytest
 # Define Token types
 tokens = ( 'NAME',
            'ADD', 
@@ -78,9 +78,29 @@ def p_factor_expr(p):
 def p_error(p):
     print("Systax error in input!")
     
+def setup_lexer_parser():
+    l = lex.lex()
+    p = yacc.yacc()
+    return l,p
+
+def test_lexer():
+    lexer_instance, _ = setup_lexer_parser()
+    lexer_instance.input('TeamA: John;\n TeamB: Alice + Bob;')
+    tokens = []
+    for token in lexer_instance:
+        tokens.append(token.type)
+    assert tokens == ['TEAM', 'NAME', 'SEMICOLON', 'TEAM', 'NAME', 'ADD', 'NAME', 'SEMICOLON']
+
+def test_parser():
+    _, parser_instance = setup_lexer_parser()
+    input_string = 'arg: welly+ pual + mike+ julie +uwe+wenyuh+pheobe+leo+CJ+Zchi;'
+    result = parser_instance.parse(input_string)
+    expected_result = 'arg:( welly, pual, mike, julie, uwe, wenyuh, pheobe, leo, CJ, Zchi )'
+    assert result == expected_result
+
 if __name__ == '__main__':
-    lexer = lex.lex()
-    parser = yacc.yacc()
+    pytest.main()
+    lexer, parser = setup_lexer_parser()
     while True:
         try:
             s = input('TeamUP: ')
