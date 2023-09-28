@@ -15,9 +15,10 @@ def t_NAME(t):
     return t
 # Define a rule so we can track name
 def t_TEAM(t):
-    r'[a-zA-Z]+:'
+    r'\w+'
     t.value = t.value[:-1]
-    t.type = 'TEAM' return t
+    t.type = 'TEAM'
+    return t
 # define a rule so we can track group
 def t_newline(t):
     r'\n+'
@@ -30,17 +31,21 @@ def t_error(t):
     t.lexer.skip(1)
     
 
-def p_expression_add(p):
-    'expression : expression ADD term'
-    
-def p_expression_semicolon(p):
-    'expression : expression SEMICOLON term'
+def p_term_add(p):
+    'term : term ADD factor'
+    p[0] = f'{p[1]},\n{p[3]}'
 
 def p_factor_name(p):
     'factor : NAME'
-    
-def p_factor_team(p):
-    'factor : TEAM'
+    p[0] = p[1]
+
+def p_term_factor(p):
+    'term : factor'
+    p[0] = p[1]
+
+def p_expr_term(p):
+    'expression : TEAM term SEMICOLON'
+    p[0] = f'{p[1]}:( {p[2]} )'
     
 def p_error(p):
     print("Systax error in input!")
@@ -50,10 +55,10 @@ if __name__ == '__main__':
     parser = yacc.yacc()
     while True:
         try:
-            s = input('input: ')
+            s = input('input ')
         except EOFError:
             break
         if not s:
             continue
         result = parser.parse(s)
-        print(result)
+        print(f'result: {result}')
