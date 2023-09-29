@@ -98,8 +98,10 @@ def test_parser():
     expected_result = 'arg:( welly, pual, mike, julie, uwe, wenyuh, pheobe, leo, CJ, Zchi )'
     assert result == expected_result
 
+
 if __name__ == '__main__':
-    pytest.main()
+    pytest.main(["-v", "TeamUP.py"])
+
     lexer, parser = setup_lexer_parser()
     while True:
         try:
