@@ -7,5 +7,5 @@ $ source docker_run.sh
 ```
 start example
 ```
-$ python3 TeamUp.py
+$ python3 TeamUP.py
 ```
