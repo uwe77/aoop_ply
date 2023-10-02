@@ -94,8 +94,7 @@ RUN pip3 install \
     matplotlib \
     tensorflow \
     tensorboard \
-    pygwidgets \
-    ply
+    pygwidgets
 
 # RUN pip install \
 #     torch==1.10 \
@@ -148,6 +147,8 @@ RUN pip install pykdtree
 RUN apt install libsnappy-dev
 ################################# unzip #####################################
 RUN apt-get install unzip
+################################# ply #####################################
+RUN pip3 install ply
 ##################################### setting #####################################
 
 RUN chown -R ${USER}:${USER} ${HOME}/
